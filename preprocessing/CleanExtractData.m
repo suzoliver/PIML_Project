@@ -2,7 +2,7 @@
 gait_list = ["RightFoot", "LeftFoot"];
 gait_file_save_name = ["R", "L"];
 
-trial_type_list = ["Walk", "StandWalk"];
+trial_type_list = ["Walk", "StandWalk","SitStandWalk"];
 iTrialType = 2; % set the type of trial to use
 
 if iTrialType == 1
@@ -15,6 +15,11 @@ elseif iTrialType == 2
     type_list = ["Right_Foot_Start"];
     type_file_save_name = ["RStart"];
     type_name = "Stand_to_Walk";
+elseif iTrialType == 3
+    % Options for Sit to Stand to Walk Trials
+    type_list = ["Right_Foot_Start"];
+    type_file_save_name = ["RStart_SitStand"];
+    type_name = "Sit_to_Stand_to_Walk";
 end
 
 % for each trial, load emg data, filter and save as CSV
@@ -64,6 +69,20 @@ for iGait = 1:length(gait_list)
                 gait_file_save_name(iGait) + "_" + ...
                 type_file_save_name(iSpeed) + "_T" + iTrial + ".csv";
             writematrix(emg_processed,"EMG_Proc" + file_name_conv)
+
+            % get hip angle + moment and save to csv
+            hip_data = zeros(height(trial_data.IK),2);
+            hip_data(:,1) = trial_data.IK.hip_flexion_r;
+            hip_data(:,2) = trial_data.ID.hip_flexion_r_moment;
+
+            writematrix(hip_data,"Hip" + file_name_conv)
+
+            % get knee angle + moment and save to csv
+            knee_data = zeros(height(trial_data.IK),2);
+            knee_data(:,1) = trial_data.IK.knee_angle_r;
+            knee_data(:,2) = trial_data.ID.knee_r_moment;
+
+            writematrix(knee_data,"Knee" + file_name_conv)
 
             % now get ankle angle + moment and save to csv
             ankle_data = zeros(height(trial_data.IK),2);
