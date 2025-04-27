@@ -1,5 +1,5 @@
 
-get_C([Len1, Len2, Len3], [l1, l2, l3], [m1,m2,m3],Q(1,:), dQ(1,:))
+get_G([Len1, Len2, Len3], [l1, l2, l3], [m1,m2,m3],Q(1,:))
 
 %%
 
@@ -69,4 +69,23 @@ function M = get_M(Ls, COMs, Ms, Angs)
         Ms(2)*(Ls(2)^2 + COMs(2)^2 -2*Ls(2)*COMs(2) - 2*COMs(2)*Ls(1)*cos(Angs(2)) + ...
         2*Ls(2)*Ls(1)*cos(Angs(2)) + Ls(1)^2) + ...
         Ms(1)*(Ls(1)^2 + COMs(1)^2 -2*Ls(1)*COMs(1));
+end
+
+
+% Get gravity vector for lower limb given segment lengths, COMs, masses 
+% and angles. Assume gravity as -9.81m/s
+function G = get_G(Ls, COMs, Ms, Angs)
+    G = zeros(3,1);
+    g = 9.81;
+    G(1) = Ms(3)*(Ls(3) - COMs(3))*cos(Angs(1)+Angs(2)+Angs(3)) + ...
+        Ms(3)*Ls(2)*sin(Angs(1)+Angs(2)) + ...
+        Ms(3)*Ls(1)*sin(Angs(1)) + ...
+        Ms(2)*(Ls(2)-COMs(2))*sin(Angs(1)+Angs(2)) + ...
+        Ms(2)*Ls(1)*sin(Angs(1)) + ...
+        Ms(1)*(Ls(1)-COMs(1))*sin(Angs(1));
+    G(2) = Ms(3)*(Ls(3) - COMs(3))*cos(Angs(1)+Angs(2)+Angs(3)) + ...
+        Ms(3)*Ls(2)*sin(Angs(1)+Angs(2)) + ...
+        Ms(2)*(Ls(2)-COMs(2))*sin(Angs(1)+Angs(2));
+    G(3) = Ms(3)*(Ls(3) - COMs(3))*cos(Angs(1)+Angs(2)+Angs(3));
+    G = G*g;
 end
