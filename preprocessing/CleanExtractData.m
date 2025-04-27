@@ -18,7 +18,7 @@ elseif iTrialType == 2
 elseif iTrialType == 3
     % Options for Sit to Stand to Walk Trials
     type_list = ["Right_Foot_Start"];
-    type_file_save_name = ["RStart_SitStand"];
+    type_file_save_name = ["RStart"];
     type_name = "Sit_to_Stand_to_Walk";
 end
 
