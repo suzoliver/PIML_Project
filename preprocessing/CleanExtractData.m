@@ -19,8 +19,8 @@ elseif iTrialType == 2
     type_name = "Stand_to_Walk";
 elseif iTrialType == 3
     % Options for Sit to Stand to Walk Trials
-    type_list = ["Right_Foot_Start"];
-    type_file_save_name = ["RStart"];
+    type_list = ["Right_Foot_Start","Left_Foot_Start"];
+    type_file_save_name = ["RStart","LStart"];
     type_name = "Sit_to_Stand_to_Walk";
 end
 
@@ -106,6 +106,8 @@ for iGait = 1:length(gait_list)
 
             % TODO: Add line here to get external moment on ankle from
             % GRF_torques and put in col 11
+            joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data);
+
 
             writematrix(joint_values,save_path+ "Joints" + file_name_conv)
         end
