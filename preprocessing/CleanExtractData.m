@@ -1,9 +1,11 @@
 
+save_path = "data\P01\CSVs\";
+
 gait_list = ["RightFoot", "LeftFoot"];
 gait_file_save_name = ["R", "L"];
 
 trial_type_list = ["Walk", "StandWalk","SitStandWalk"];
-iTrialType = 2; % set the type of trial to use
+iTrialType = 1; % set the type of trial to use
 
 if iTrialType == 1
     % Options for Walk Only Trials
@@ -68,28 +70,44 @@ for iGait = 1:length(gait_list)
             file_name_conv = "_P01_" + trial_type_list(iTrialType) + "_" +...
                 gait_file_save_name(iGait) + "_" + ...
                 type_file_save_name(iSpeed) + "_T" + iTrial + ".csv";
-            writematrix(emg_processed,"EMG_Proc" + file_name_conv)
+            writematrix(emg_processed,save_path + "EMG_Proc" + file_name_conv)
 
-            % get hip angle + moment and save to csv
-            hip_data = zeros(height(trial_data.IK),2);
-            hip_data(:,1) = trial_data.IK.hip_flexion_r;
-            hip_data(:,2) = trial_data.ID.hip_flexion_r_moment;
 
-            writematrix(hip_data,"Hip" + file_name_conv)
+            % Now get true joint kinematic data. Save all angles, then all
+            % velocities, then all accelerations. Always in order [hip,
+            % knee, ankle]. Then col 10 is the true ankle moment and col 11
+            % is the external moment on the ankle.
 
-            % get knee angle + moment and save to csv
-            knee_data = zeros(height(trial_data.IK),2);
-            knee_data(:,1) = trial_data.IK.knee_angle_r;
-            knee_data(:,2) = trial_data.ID.knee_r_moment;
+            dt = 0.01;
+            % initalize array to write to csv
+            joint_values = zeros(height(trial_data.IK), 11);
 
-            writematrix(knee_data,"Knee" + file_name_conv)
+            % get joint angles
+            joint_values(:,1) = trial_data.IK.('hip_flexion_r');
+            joint_values(:,2) = trial_data.IK.('knee_angle_r');
+            joint_values(:,3) = trial_data.IK.('ankle_angle_r');
+            joint_values(:,1:3) = deg2rad(joint_values(:,1:3));
 
-            % now get ankle angle + moment and save to csv
-            ankle_data = zeros(height(trial_data.IK),2);
-            ankle_data(:,1) = trial_data.IK.ankle_angle_r;
-            ankle_data(:,2) = trial_data.ID.ankle_r_moment;
+            % differentiate to get velocities
+            joint_values(:,4:6) = [diff(joint_values(:,1:3));[0,0,0]] /dt;
 
-            writematrix(ankle_data,"Ankle" + file_name_conv)
+            % differentiate again to get accelerations
+            joint_values(:,7:9) = [diff(joint_values(:,4:6));[0,0,0]] /dt;
+
+            % velocity and accelerations are noisy - do low pass filter to
+            % get smoother results
+            % cut off of 10Hz seems to work fine
+            filt_cut = 10;
+            joint_values(:,4:9) = lowpass(joint_values(:,4:9),filt_cut,1/dt);
+
+            % now add true joint moment for the ankle only (others not
+            % needed since we are only predicting ankle)
+            joint_values(:,10) = trial_data.ID.ankle_r_moment;
+
+            % TODO: Add line here to get external moment on ankle from
+            % GRF_torques and put in col 11
+
+            writematrix(joint_values,save_path+ "Joints" + file_name_conv)
         end
     end
 end
