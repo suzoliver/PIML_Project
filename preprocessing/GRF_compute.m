@@ -1,43 +1,68 @@
+% updated to work for walk only trials (by manally inputting which trials
+% to use force plate 2 and updating  path to be more flexible.
+% TODO: Get working for sit to stand trials, remembering to chop first x
+% seconds to avoid standing part of trials.
+
 function GRF_torque = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data)
 % takes input from the preprocess file:
 % iTrialType: Walk, Stand-to-walk or Sit-to-stand-to-walk?
-% iGait: Right foot or left foot?
+% iGait: ght foot or left foot?
 % iSpeed = (slow, med, fast?), (rightfoot?), (rightfoot, leftfoot?)
 % iTrial = trial 1, 2 or 3?
+
+path_delim = "\"; % use "\" on PC and "/" on mac
+path_prefix = "data" + path_delim + "P01" + path_delim + "RawData" + ...
+    path_delim + "Level Ground" + path_delim;
+
+use_plate2 = false;
+
 
 if iTrialType == 1 % walking
     if iSpeed == 1 % slow
         type_name = "LG_Walk_Slow";
         trial_label = ["Slower01", "Slower02", "Slower03"];
-        path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
+        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
+        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+
+        if iTrial == 2
+            use_plate2 = true;
+        end
+
 
     elseif iSpeed == 2 % self selected
         type_name = "LG_Walk_SelfSelected";
         trial_label = ["Normal09", "Normal10", "Normal12"];
-        path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
+        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
+        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+
+        if iTrial == 2 || iTrial == 3
+            use_plate2 = true;
+        end
 
     elseif iSpeed == 3 % fast
         type_name = "LG_Walk_Fast";
         trial_label = ["Faster01", "Faster02", "Faster04"];
-        path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name + '/LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
+        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
+        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+
+        if iTrial == 2 || iTrial == 3
+            use_plate2 = true;
+        end
     end
 
 elseif iTrialType == 2 % stand to walk
@@ -94,7 +119,7 @@ time = mot_data(:, strcmp(mot_headers,...
 
 % Get indices for GRF and COP columns to create the vectors
 
-% if iGait == 1 % force plate 1 for right foot
+if use_plate2 == false % force plate 1 for right foot
     % Get indices for GRF and COP columns from plate 1
     % vertical force
     vy1_idx = find(strcmp(mot_headers, 'ground_force1_vy'));
@@ -137,7 +162,7 @@ time = mot_data(:, strcmp(mot_headers,...
 
     % approximate Ankle Position:
     % find index of first non-zero F_y instance
-    idx_1 = find(F1(:), 1, 'first');  
+    idx = find(F1(:), 1, 'first');  
     %idx_2 = find(F1(:), 1, 'last');  % returns 4
 
     % estimate Ankle position (First point of contact with the plate):
@@ -152,7 +177,7 @@ time = mot_data(:, strcmp(mot_headers,...
         tau_GRF_all(i) = r_ankle(i)*F1(i);
     end
 
-%elseif iGait == 2 % force plate 2 for left foot
+else % force plate 2 for left foot
     % vertical force
     vy2_idx = find(strcmp(mot_headers, 'ground_force2_vy'));
     % pressure centers
@@ -179,25 +204,27 @@ time = mot_data(:, strcmp(mot_headers,...
     for i = 1: size(COP2,1)
         r_ankle(i) = COP2(i,3)- Ankle_pos(3);
 
-        tau_GRF_all2(i) = abs(r_ankle(i)*F2(i));
+        tau_GRF_all(i) = abs(r_ankle(i)*F2(i));
     end
 end
 
-% Keep every 10th sample (downsampling to match theta)
-tau_GRF_down = downsample(tau_GRF_all, 10);
-tau_GRF_down_all = [zeros(height(tau_GRF_down),1) zeros(height(tau_GRF_down),1) tau_GRF_down];
+    
 
-tau_GRF_down2 = downsample(tau_GRF_all, 10);
-tau_GRF_down_all2 = [zeros(height(tau_GRF_down2),1) zeros(height(tau_GRF_down),1) tau_GRF_down];
+% Keep every 10th sample (downsampling to match theta)
+%tau_GRF_down = downsample(tau_GRF_all, 10);
+% tau_GRF_down_all = [zeros(height(tau_GRF_down),1) zeros(height(tau_GRF_down),1) tau_GRF_down];
+% 
+% tau_GRF_down2 = downsample(tau_GRF_all, 10);
+% tau_GRF_down_all2 = [zeros(height(tau_GRF_down2),1) zeros(height(tau_GRF_down),1) tau_GRF_down];
 
 %% Check dynamics:
 
 % Extract time vector
-time2 = ID_data(:, strcmp(ID_headers,...
-    'time'));
-
-n = size(Q, 1);  % Number of time steps
-tau_model = zeros(n, 3);  % Estimated torque for each joint
+% time2 = ID_data(:, strcmp(ID_headers,...
+%     'time'));
+% 
+% n = size(Q, 1);  % Number of time steps
+% tau_model = zeros(n, 3);  % Estimated torque for each joint
 
 % [M_all, C_all, G_all] = getMCG(Q,dQ);
 % 
@@ -214,37 +241,39 @@ tau_model = zeros(n, 3);  % Estimated torque for each joint
 %     tau_model(i, :) = (M * ddq_i + C * dq_i + G - tau_GRF').';
 % end
 
-tau_meas = [tau_hip, tau_knee, tau_ankle];  % Nx3
-% tau_ankle_model = tau_model(:,3);  % Only 3rd joint
-
-% Plot: Measured vs. Estimated Ankle Torque
-figure;
-plot(time2, tau_ankle, 'k', 'LineWidth', 1.5); hold on;
-%plot(time2, tau_ankle_model, '--r', 'LineWidth', 1.5);
-hold on; plot(time,tau_GRF_all)
-xlabel('Time (s)');
-ylabel('Ankle Torque (Nm)');
-legend('Measured \tau_{ankle}', 'External torque');
-title('Measured vs Estimated Right Ankle Torque plate 1');
-grid on;
-
-figure; 
-plot(time2, tau_ankle, 'k', 'LineWidth', 1.5); hold on;
-hold on; plot(time,tau_GRF_all2)
-%plot(time2, tau_ankle_model2, '--r', 'LineWidth', 1.5);
-xlabel('Time (s)');
-ylabel('Ankle Torque (Nm)');
-legend('Measured \tau_{ankle}', 'External torque');
-title('Measured vs Estimated Right Ankle Torque plate 2');
-grid on;
+% tau_meas = [tau_hip, tau_knee, tau_ankle];  % Nx3
+% % tau_ankle_model = tau_model(:,3);  % Only 3rd joint
+% 
+% % Plot: Measured vs. Estimated Ankle Torque
+% figure;
+% plot(time2, tau_ankle, 'k', 'LineWidth', 1.5); hold on;
+% %plot(time2, tau_ankle_model, '--r', 'LineWidth', 1.5);
+% hold on; plot(time,tau_GRF_all)
+% xlabel('Time (s)');
+% ylabel('Ankle Torque (Nm)');
+% legend('Measured \tau_{ankle}', 'External torque');
+% title('Measured vs Estimated Right Ankle Torque plate 1');
+% grid on;
+% 
+% figure; 
+% plot(time2, tau_ankle, 'k', 'LineWidth', 1.5); hold on;
+% hold on; plot(time,tau_GRF_all2)
+% %plot(time2, tau_ankle_model2, '--r', 'LineWidth', 1.5);
+% xlabel('Time (s)');
+% ylabel('Ankle Torque (Nm)');
+% legend('Measured \tau_{ankle}', 'External torque');
+% title('Measured vs Estimated Right Ankle Torque plate 2');
+% grid on;
 
 
 time_start = find(time == trial_data.IK.time(1));
 time_end = find(time == trial_data.IK.time(end));
 
+
+
 % downsampling to match joint value vector size
 GRF_torque = tau_GRF_all(time_start:time_end);
 GRF_torque = downsample(GRF_torque, 10);
-plot(trial_data.IK.time,GRF_torque); hold on;
-plot(time,F1);
+%plot(trial_data.IK.time,GRF_torque); hold on;
+%plot(time,F1);
 end

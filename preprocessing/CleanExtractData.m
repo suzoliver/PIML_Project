@@ -1,7 +1,8 @@
 
 save_path = "data\P01\CSVs\";
 
-gait_list = ["RightFoot", "LeftFoot"];
+%gait_list = ["RightFoot", "LeftFoot"];
+gait_list = ["RightFoot"]; % just consider right for now
 gait_file_save_name = ["R", "L"];
 
 trial_type_list = ["Walk", "StandWalk","SitStandWalk"];
@@ -104,7 +105,7 @@ for iGait = 1:length(gait_list)
             % needed since we are only predicting ankle)
             joint_values(:,10) = trial_data.ID.ankle_r_moment;
 
-            % TODO: Add line here to get external moment on ankle from
+            % Get external moment on ankle from
             % GRF_torques and put in col 11
             joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data);
 
