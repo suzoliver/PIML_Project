@@ -1,5 +1,13 @@
 
-save_path = "data\P01\CSVs\";
+sbj_num = 2; % change for diff subject
+
+% load P0sbj_num in your environment.
+eval(sprintf("load('P0%d.mat')", sbj_num));
+path_delim = "\"; % use "\" on PC and "/" on mac
+save_path = "data" + path_delim + "P0" + string(sbj_num) + path_delim + "CSVs" + path_delim;
+
+%use instead of P0..
+sbj = eval(sprintf('P0%d', sbj_num));
 
 gait_list = ["RightFoot", "LeftFoot"];
 %gait_list = ["RightFoot"]; % just consider right for now
@@ -34,7 +42,7 @@ for iGait = 1:length(gait_list)
         %note for P01, Trial type 2: skip trial 2, data collection error
         for iTrial = 1:3 
 
-            trial_data = P01.(gait_list(iGait) + "_GaitCycle_Data").Level_Ground.(type_name).(type_list(iSpeed))(iTrial);
+            trial_data = sbj.(gait_list(iGait) + "_GaitCycle_Data").Level_Ground.(type_name).(type_list(iSpeed))(iTrial);
             emg_data = trial_data.RightLeg_EMG;
 
             % Process EMG Data
@@ -69,7 +77,7 @@ for iGait = 1:length(gait_list)
                 emg_processed(:,iMuscle) = EMG_filtered;
             end
 
-            file_name_conv = "_P01_" + trial_type_list(iTrialType) + "_" +...
+            file_name_conv = "_P0" + string(sbj_num) + "_" + trial_type_list(iTrialType) + "_" +...
                 gait_file_save_name(iGait) + "_" + ...
                 type_file_save_name(iSpeed) + "_T" + iTrial + ".csv";
             writematrix(emg_processed,save_path + "EMG_Proc" + file_name_conv)
