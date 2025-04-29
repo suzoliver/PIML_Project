@@ -21,9 +21,10 @@ if iTrialType == 1 % walking
     if iSpeed == 1 % slow
         type_name = "LG_Walk_Slow";
         trial_label = ["Slower01", "Slower02", "Slower03"];
-        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path_main =  path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path1 = path_main +'_filtered.mot';
+        path2 = path_main +'_ik.mot';
+        path3 = path_main +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
@@ -37,9 +38,10 @@ if iTrialType == 1 % walking
     elseif iSpeed == 2 % self selected
         type_name = "LG_Walk_SelfSelected";
         trial_label = ["Normal09", "Normal10", "Normal12"];
-        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path1 = path_main +'_filtered.mot';
+        path2 = path_main +'_ik.mot';
+        path3 = path_main +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
@@ -52,9 +54,10 @@ if iTrialType == 1 % walking
     elseif iSpeed == 3 % fast
         type_name = "LG_Walk_Fast";
         trial_label = ["Faster01", "Faster02", "Faster04"];
-        path1 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_filtered.mot';
-        path2 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_ik.mot';
-        path3 = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial) +'_id.sto';
+        path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path1 = path_main +'_filtered.mot';
+        path2 = path_main +'_ik.mot';
+        path3 = path_main +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
@@ -69,9 +72,10 @@ elseif iTrialType == 2 % stand to walk
     type_name = "LG_Stand_to_Walk";
     foot_start = "RightFootStart";
     trial_label = ["Walk01", "Walk02", "Walk04"];
-    path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start(iSpeed)+'/LG_Stand_to_'+trial_label(iTrial) +'_filtered.mot';
-    path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start(iSpeed)+'/LG_Stand_to_'+trial_label(iTrial) +'_ik.mot';
-    path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start(iSpeed)+'/LG_Stand_to_'+trial_label(iTrial) +'_id.sto';
+    path_main = path_prefix + type_name +path_delim+foot_start(iSpeed)+path_delim+'LG_Stand_to_'+trial_label(iTrial);
+    path1 = path_main +'_filtered.mot';
+    path2 = path_main +'_ik.mot';
+    path3 = path_main +'_id.sto';
 
     mot_file = importdata(path1);
     IK_file = importdata(path2);
@@ -81,10 +85,12 @@ elseif iTrialType == 3 % sit to stand to walk\
     type_name = "LG_Sit_Stand_Walk";
     if iSpeed == 1
         foot_start = "RightFootStart";
-        trial_label = ["Walk01", "Walk02", "Walk04"];
-        path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_filtered.mot';
-        path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_ik.mot';
-        path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_id.sto';
+        trial_label = ["Walk01", "Walk02", "Walk03"];
+        path_main = path_prefix + type_name +path_delim+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial);
+        path1 = path_main +'_filtered.mot';
+        path2 = path_main +'_ik.mot';
+        path3 = path_main +'_id.sto';
+
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
@@ -93,9 +99,10 @@ elseif iTrialType == 3 % sit to stand to walk\
     elseif iSpeed == 2
         foot_start = "LeftFootStart";
         trial_label = ["Walk05", "Walk07", "Walk08"];
-        path1 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_filtered.mot';
-        path2 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_ik.mot';
-        path3 = '/Users/ikhlas_mac/Desktop/P01/RawData/Level Ground/'+ type_name +'/'+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial) +'_id.sto';
+        path_main = path_prefix + type_name +path_delim+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial);
+        path1 = path_main +'_filtered.mot';
+        path2 = path_main +'_ik.mot';
+        path3 = path_main +'_id.sto';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);

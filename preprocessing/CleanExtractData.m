@@ -31,7 +31,8 @@ end
 
 for iGait = 1:length(gait_list)
     for iSpeed = 1:length(type_list)
-        for iTrial = 1:3
+        %note for P01, Trial type 2: skip trial 2, data collection error
+        for iTrial = 1:3 
 
             trial_data = P01.(gait_list(iGait) + "_GaitCycle_Data").Level_Ground.(type_name).(type_list(iSpeed))(iTrial);
             emg_data = trial_data.RightLeg_EMG;
