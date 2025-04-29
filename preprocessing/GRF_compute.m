@@ -30,10 +30,16 @@ if iTrialType == 1 % walking
         IK_file = importdata(path2);
         ID_file = importdata(path3);
 
-        if iTrial == 2
-            use_plate2 = true;
-        end
 
+        if iGait == 1
+            if iTrial == 2
+                use_plate2 = true;
+            end
+        else 
+            if iTrial == 2
+                use_plate2 = true;
+            end
+        end
 
     elseif iSpeed == 2 % self selected
         type_name = "LG_Walk_SelfSelected";
@@ -47,8 +53,15 @@ if iTrialType == 1 % walking
         IK_file = importdata(path2);
         ID_file = importdata(path3);
 
-        if iTrial == 2 || iTrial == 3
-            use_plate2 = true;
+
+        if iGait == 1
+            if iTrial == 2 || iTrial == 3
+                use_plate2 = true;
+            end
+        else 
+            if iTrial == 2 || iTrial == 3
+                use_plate2 = true;
+            end
         end
 
     elseif iSpeed == 3 % fast
@@ -63,8 +76,15 @@ if iTrialType == 1 % walking
         IK_file = importdata(path2);
         ID_file = importdata(path3);
 
-        if iTrial == 2 || iTrial == 3
-            use_plate2 = true;
+
+        if iGait == 1
+            if iTrial == 2 || iTrial == 3
+                use_plate2 = true;
+            end
+        else 
+            if iTrial == 2 || iTrial == 3
+                use_plate2 = true;
+            end
         end
     end
 

@@ -1,8 +1,8 @@
 
 save_path = "data\P01\CSVs\";
 
-%gait_list = ["RightFoot", "LeftFoot"];
-gait_list = ["RightFoot"]; % just consider right for now
+gait_list = ["RightFoot", "LeftFoot"];
+%gait_list = ["RightFoot"]; % just consider right for now
 gait_file_save_name = ["R", "L"];
 
 trial_type_list = ["Walk", "StandWalk","SitStandWalk"];
