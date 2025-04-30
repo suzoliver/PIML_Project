@@ -18,8 +18,12 @@ path_prefix = "data" + path_delim + "P01" + path_delim + "RawData" + ...
 if iTrialType == 1 % walking
     if iSpeed == 1 % slow
         type_name = "LG_Walk_Slow";
-        trial_label = ["Slower01", "Slower02", "Slower03"];
-        path_main =  path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        %trial_label = ["Slower01", "Slower02", "Slower03"];
+        trial_label = ["Slower02", "Slower03", "Slower011"];
+
+        %path_main =  path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path_main =  path_prefix + type_name + path_delim + 'LG_Walking_'+ trial_label(iTrial);
+
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
@@ -33,8 +37,12 @@ if iTrialType == 1 % walking
 
     elseif iSpeed == 2 % self selected
         type_name = "LG_Walk_SelfSelected";
-        trial_label = ["Normal09", "Normal10", "Normal12"];
-        path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        %trial_label = ["Normal09", "Normal10", "Normal12"];
+        trial_label = ["Normal01", "Normal02", "Normal04"];
+
+        %path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path_main = path_prefix + type_name + path_delim + 'LG_Walking_'+ trial_label(iTrial);
+
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
@@ -48,8 +56,10 @@ if iTrialType == 1 % walking
 
     elseif iSpeed == 3 % fast
         type_name = "LG_Walk_Fast";
-        trial_label = ["Faster01", "Faster02", "Faster04"];
-        path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        %trial_label = ["Faster01", "Faster02", "Faster04"];
+        trial_label = ["Faster02", "Faster03", "Faster05"];
+        %path_main = path_prefix + type_name + path_delim + 'LG_Walk_'+ trial_label(iTrial);
+        path_main = path_prefix + type_name + path_delim + 'LG_Walking_'+ trial_label(iTrial);
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
@@ -66,8 +76,11 @@ if iTrialType == 1 % walking
 elseif iTrialType == 2 % stand to walk
     type_name = "LG_Stand_to_Walk";
     foot_start = "RightFootStart";
-    trial_label = ["Walk01", "Walk02", "Walk04"];
-    path_main = path_prefix + type_name +path_delim+foot_start(iSpeed)+path_delim+'LG_Stand_to_'+trial_label(iTrial);
+    %trial_label = ["Walk01", "Walk02", "Walk04"];
+    trial_label = ["Walk01", "Walk04", "Walk05"];
+
+    %path_main = path_prefix + type_name +path_delim+foot_start(iSpeed)+path_delim+'LG_Stand_to_'+trial_label(iTrial);
+    path_main = path_prefix + type_name +path_delim+foot_start(iSpeed)+path_delim+'Stand_to_'+trial_label(iTrial);
     path1 = path_main +'_filtered.mot';
     path2 = path_main +'_ik.mot';
     path3 = path_main +'_id.sto';
@@ -82,8 +95,12 @@ elseif iTrialType == 3 % sit to stand to walk\
     type_name = "LG_Sit_Stand_Walk";
     if iSpeed == 1
         foot_start = "RightFootStart";
-        trial_label = ["Walk01", "Walk02", "Walk03"];
-        path_main = path_prefix + type_name +path_delim+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial);
+        %trial_label = ["Walk01", "Walk02", "Walk03"];
+        trial_label = ["Walk01", "Walk02", "Walk04"];
+
+        %path_main = path_prefix + type_name +path_delim+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial);
+        path_main = path_prefix + type_name +path_delim+foot_start+'/Sit_Stand_'+trial_label(iTrial);
+
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
@@ -96,8 +113,12 @@ elseif iTrialType == 3 % sit to stand to walk\
 
     elseif iSpeed == 2
         foot_start = "LeftFootStart";
-        trial_label = ["Walk05", "Walk07", "Walk08"];
+        %trial_label = ["Walk05", "Walk07", "Walk08"];
+        trial_label = ["Walk07", "Walk08", "Walk11"];
+
         path_main = path_prefix + type_name +path_delim+foot_start+'/LG_Sit_Stand_'+trial_label(iTrial);
+        path_main = path_prefix + type_name +path_delim+foot_start+'/Sit_Stand_'+trial_label(iTrial);
+
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
