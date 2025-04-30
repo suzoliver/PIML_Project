@@ -116,7 +116,7 @@ for iGait = 1:length(gait_list)
 
             % Get external moment on ankle from
             % GRF_torques and put in col 11
-            joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data);
+            joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data,sbj_num);
 
 
             writematrix(joint_values,save_path+ "Joints" + file_name_conv)
