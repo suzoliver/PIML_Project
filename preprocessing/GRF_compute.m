@@ -3,7 +3,7 @@
 % TODO: Get working for sit to stand trials, remembering to chop first x
 % seconds to avoid standing part of trials.
 
-function GRF_torque = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data)
+function GRF_torque = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data, sbj_num)
 % takes input from the preprocess file:
 % iTrialType: Walk, Stand-to-walk or Sit-to-stand-to-walk?
 % iGait: ght foot or left foot?
@@ -14,8 +14,6 @@ path_delim = "\"; % use "\" on PC and "/" on mac
 path_prefix = "data" + path_delim + "P01" + path_delim + "RawData" + ...
     path_delim + "Level Ground" + path_delim;
 
-use_plate2 = false;
-
 
 if iTrialType == 1 % walking
     if iSpeed == 1 % slow
@@ -25,21 +23,13 @@ if iTrialType == 1 % walking
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
+        path4 = path_main +'_ExternalLoads.xml';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+        xml_file = importdata(path4);
 
-
-        if iGait == 1
-            if iTrial == 2
-                use_plate2 = true;
-            end
-        else 
-            if iTrial == 2
-                use_plate2 = true;
-            end
-        end
 
     elseif iSpeed == 2 % self selected
         type_name = "LG_Walk_SelfSelected";
@@ -48,21 +38,13 @@ if iTrialType == 1 % walking
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
+        path4 = path_main +'_ExternalLoads.xml';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+        xml_file = importdata(path4);
 
-
-        if iGait == 1
-            if iTrial == 2 || iTrial == 3
-                use_plate2 = true;
-            end
-        else 
-            if iTrial == 2 || iTrial == 3
-                use_plate2 = true;
-            end
-        end
 
     elseif iSpeed == 3 % fast
         type_name = "LG_Walk_Fast";
@@ -71,21 +53,14 @@ if iTrialType == 1 % walking
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
+        path4 = path_main +'_ExternalLoads.xml';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+        xml_file = importdata(path4);
 
 
-        if iGait == 1
-            if iTrial == 2 || iTrial == 3
-                use_plate2 = true;
-            end
-        else 
-            if iTrial == 2 || iTrial == 3
-                use_plate2 = true;
-            end
-        end
     end
 
 elseif iTrialType == 2 % stand to walk
@@ -96,10 +71,12 @@ elseif iTrialType == 2 % stand to walk
     path1 = path_main +'_filtered.mot';
     path2 = path_main +'_ik.mot';
     path3 = path_main +'_id.sto';
+    path4 = path_main +'_ExternalLoads.xml';
 
     mot_file = importdata(path1);
     IK_file = importdata(path2);
     ID_file = importdata(path3);
+    xml_file = importdata(path4);
 
 elseif iTrialType == 3 % sit to stand to walk\
     type_name = "LG_Sit_Stand_Walk";
@@ -110,11 +87,12 @@ elseif iTrialType == 3 % sit to stand to walk\
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
-
+        path4 = path_main +'_ExternalLoads.xml';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+        xml_file = importdata(path4);
 
     elseif iSpeed == 2
         foot_start = "LeftFootStart";
@@ -123,10 +101,12 @@ elseif iTrialType == 3 % sit to stand to walk\
         path1 = path_main +'_filtered.mot';
         path2 = path_main +'_ik.mot';
         path3 = path_main +'_id.sto';
+        path4 = path_main +'_ExternalLoads.xml';
 
         mot_file = importdata(path1);
         IK_file = importdata(path2);
         ID_file = importdata(path3);
+        xml_file = importdata(path4);
     end
 end
 
@@ -144,7 +124,36 @@ ID_headers = ID_file.colheaders;
 time = mot_data(:, strcmp(mot_headers,...
     'time'));
 
-% Get indices for GRF and COP columns to create the vectors
+%% check if right foot is on plate 2
+% Load XML
+xmlFile = path4; 
+doc = xmlread(xmlFile);
+
+externalForces = doc.getElementsByTagName('ExternalForce');
+
+% Initialize
+useplate2 = NaN;
+
+% Loop through ExternalForce entries
+for k = 0:externalForces.getLength-1
+    forceNode = externalForces.item(k);
+
+    % Get the force_identifier tag value
+    force_id = char(forceNode.getElementsByTagName('force_identifier').item(0).getTextContent);
+
+    % Check if it's ground_force2_v
+    if strcmp(force_id, 'ground_force2_v')
+        applied_to_body = char(forceNode.getElementsByTagName('applied_to_body').item(0).getTextContent);
+
+        % Set flag depending on body
+        if strcmp(applied_to_body, 'calcn_r')
+            useplate2 = true;
+        elseif strcmp(applied_to_body, 'calcn_l')
+            useplate2 = false;
+        end
+        break;  % No need to continue loop
+    end
+end
 
 if use_plate2 == false % force plate 1 for right foot
     % Get indices for GRF and COP columns from plate 1
