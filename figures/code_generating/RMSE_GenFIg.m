@@ -1,4 +1,5 @@
-%% Generate bar plot
+%% Generate bar plot of RMSE results
+% Must have PIML_RMSE.csv in path to run
 
 %order: angle no phys, angle w phys, moment no phys, moment with phys
 rmse_values = table2array(readtable("PIML_RMSE.csv"));
@@ -11,6 +12,7 @@ subj_nums = [1,3,4,7,8];
 figure('Position', [200,200,500,650])
 tiledlayout(2,1)
 
+% first do angle RMSE plots
 nexttile
 hold on
 bar(rmse_angle)
@@ -22,7 +24,7 @@ legend("No Physics Term", "With Physics Term")
 set(gca, 'FontWeight', 'bold', 'FontSize', 14, 'FontName', 'Arial')
 
 
-
+% Next do torque RMSE plots
 nexttile
 hold on
 bar(rmse_moment)
