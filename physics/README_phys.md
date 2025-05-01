@@ -1,8 +1,9 @@
 # Physics Module
 
 This folder contains MATLAB files related to the physics-informed modeling of joint dynamics.
+
+P01_Model folder contains the leg model for P01 and torque computation for a sample trial
 The 3 linkage system is modeled using Peter Corke Robotics toolbox.
-the files should be run withing the main toolbox path:
-/Users/......../MATLAB/robotics-toolbox-matlab-master
+the toolbox should be installed to run the model
 
 Link to the toolbox on github: https://github.com/petercorke/robotics-toolbox-matlab
