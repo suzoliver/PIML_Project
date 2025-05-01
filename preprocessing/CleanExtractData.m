@@ -1,20 +1,25 @@
+% Note to run this file, you must have the subject mat file (i.e. P01.mat)
+% loaded and the motion files in the path specified by the GRF_compute
+% function
 
-sbj_num = 2; % change for diff subject
+iSubj = 1; % change for diff subject
 
-% load P0sbj_num in your environment.
-eval(sprintf("load('P0%d.mat')", sbj_num));
+% get path to save files
 path_delim = "\"; % use "\" on PC and "/" on mac
-save_path = "data" + path_delim + "P0" + string(sbj_num) + path_delim + "CSVs" + path_delim;
+save_path = "data" + path_delim + "P0" + string(iSubj) + path_delim + "CSVs" + path_delim;
 
-%use instead of P0..
-sbj = eval(sprintf('P0%d', sbj_num));
+% get subject data
+sbj = eval(sprintf('P0%d', iSubj));
 
+% Loop through trials starting with right foot and left foot
 gait_list = ["RightFoot", "LeftFoot"];
-%gait_list = ["RightFoot"]; % just consider right for now
 gait_file_save_name = ["R", "L"];
-
+ 
+% three types of trials, all with different naming conventions
+% specify all trials types to process
 trial_type_list = ["Walk", "StandWalk","SitStandWalk"];
-iTrialType = 1; % set the type of trial to use
+% set trial type index (1-3) to use on this run
+iTrialType = 1;
 
 if iTrialType == 1
     % Options for Walk Only Trials
@@ -34,23 +39,24 @@ elseif iTrialType == 3
 end
 
 % for each trial, load emg data, filter and save as CSV
-% then get right ankle data (angle, torque) and save to separate csv 
+% then get right leg joint data (angle, torque) and save to separate csv 
 % use same naming structure for both
 
 for iGait = 1:length(gait_list)
     for iSpeed = 1:length(type_list)
-        %note for P01, Trial type 2: skip trial 2, data collection error
         for iTrial = 1:3 
 
+            % get data for this trial
             trial_data = sbj.(gait_list(iGait) + "_GaitCycle_Data").Level_Ground.(type_name).(type_list(iSpeed))(iTrial);
             emg_data = trial_data.RightLeg_EMG;
 
-            % Process EMG Data
+            % EMG data info
             fs_EMG = 2000;
             nMuscles = 64;
             
             emg_processed = zeros(size(emg_data)); 
             
+            % build filter for EMG
             % Butterworth filter between 20 and 500 hz
             filtMax = 500;
             filtMin = 20;
@@ -62,6 +68,7 @@ for iGait = 1:length(gait_list)
             
             [bp_b, bp_a] = butter(4, [bp_lower bp_upper], "bandpass");
             
+            % iterate through each channel to apply filter
             for iMuscle = 1:nMuscles
                 % Apply bandstop filter at multiples of 60 Hz
                 % This accounts for powerline noise
@@ -77,7 +84,8 @@ for iGait = 1:length(gait_list)
                 emg_processed(:,iMuscle) = EMG_filtered;
             end
 
-            file_name_conv = "_P0" + string(sbj_num) + "_" + trial_type_list(iTrialType) + "_" +...
+            % save out EMG data to csv at specified path
+            file_name_conv = "_P0" + string(iSubj) + "_" + trial_type_list(iTrialType) + "_" +...
                 gait_file_save_name(iGait) + "_" + ...
                 type_file_save_name(iSpeed) + "_T" + iTrial + ".csv";
             writematrix(emg_processed,save_path + "EMG_Proc" + file_name_conv)
@@ -88,7 +96,9 @@ for iGait = 1:length(gait_list)
             % knee, ankle]. Then col 10 is the true ankle moment and col 11
             % is the external moment on the ankle.
 
+            % time step size for joint kinemetics/dynamics
             dt = 0.01;
+
             % initalize array to write to csv
             joint_values = zeros(height(trial_data.IK), 11);
 
@@ -116,8 +126,7 @@ for iGait = 1:length(gait_list)
 
             % Get external moment on ankle from
             % GRF_torques and put in col 11
-            joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data,sbj_num);
-
+            joint_values(:,11) = GRF_compute(iTrialType, iGait, iSpeed, iTrial, trial_data,iSubj);
 
             writematrix(joint_values,save_path+ "Joints" + file_name_conv)
         end

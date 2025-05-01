@@ -1,0 +1,6 @@
+Subject,Angle RMSE No Physics,Angle RMSE Physics,Moment RMSE No Physics,Moment RMSE Physics,Total Epochs No Physics,Total Epochs Physics,,
+1,5.91,5.977,16.361,16.566,87,75,,
+3,7.908,7.4629,10.439,10.46,47,45,,Note: Ran with no minimum epoch count and starting lr 0.005 - hard to converge
+4,24.49,9.1429,13.913,13.393,56,55,,Note: Ran with no minimum epoch count and starting lr 0.005. angle weight 8
+7,15.392,6.1783,19.659,19.4186,79,122,,Note: Ran with 0.005 as starting lr
+8,7.0937,7.092,11.862,10.9269,89,80,,

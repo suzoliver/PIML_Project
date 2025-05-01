@@ -1,5 +1,6 @@
 
-%Create pre-processing figure
+% Create pre-processing figure base. These  figures were then edited in
+% illustrator to add annotations.
 
 % Use this trial as example
 iTrial = 1;
@@ -80,7 +81,7 @@ for iCol = 1:3
     set(gca, 'FontName', 'Arial', 'FontWeight', 'bold', 'FontSize', 14)
 end
 
-%% 
+%%  Now do joint processing code
 
 dt = 0.01;
 
@@ -94,6 +95,7 @@ joint_values(:,2) = [diff(joint_values(:,1));0] /dt;
 % differentiate again to get accelerations
 joint_values(:,3) = [diff(joint_values(:,2));0] /dt;
 
+% filter out noise with low pass filter
 filt_cut = 10;
 filt_joint_values = lowpass(joint_values,filt_cut,1/dt);
 
